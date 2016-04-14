@@ -39,6 +39,6 @@ VAR: ID | NUM;
 RELOP: '<' | '>' | '<=' | '>=' | '!='| '==';
 CON: VAR RELOP VAR;
 OP: '+'|'-'|'*'|'/'|'=';
-EXP : VAR | EXP OP EXP | '(' EXP ')';
+EXP :  EXP OP EXP | '(' EXP ')'|VAR;
 BOOL: 'true' | 'false';
 
