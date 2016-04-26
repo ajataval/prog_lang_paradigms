@@ -108,9 +108,9 @@ class Runtime(object):
                     else:
                         self.function_map[func_name].env_table[key] = env_table[value]
 
-                for key in self.main_env_table.keys():
-                    self.function_map[func_name].env_table[key] = self.main_env_table[key]
-                    print "{}, {}".format(key, env_table[value])
+                # for key in self.main_env_table.keys():
+                #     self.function_map[func_name].env_table[key] = self.main_env_table[key]
+                #     print "{}, {}".format(key, env_table[value])
                 # print "FUNCTIOn ENV"
                 # print self.function_map[func_name].env_table.items()
                 env_table = self.function_map[func_name].env_table
@@ -196,5 +196,5 @@ class Runtime(object):
     def isFalse(self, value):
         return "False".lower() == value.lower()
 
-runtime = Runtime('INTCode/StackExample.in')
+runtime = Runtime('INTCode/RecursiveExpo.in')
 runtime.run()
