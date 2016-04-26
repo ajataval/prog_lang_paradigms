@@ -19,15 +19,13 @@ class Runtime(object):
     def interpret(self, lines):
         # try:
         count = 1
+        MAX_RECURSION_DEPTH = 1000
         operators = ALOperator()
         return_stack = []
         skip = False
         line_num = 0
         call_line_num = 0
-        # env_stack = self.main_env_table
-
         env_table = self.main_env_table
-
         runAlready = False
         total_lines = len(lines)
         while line_num < total_lines:
@@ -44,8 +42,6 @@ class Runtime(object):
             elif len(line) > 2:
                 cmd = line[0].strip()
                 param = [token.strip() for token in line[1:]]
-            # print cmd
-            # print param
             if cmd == "PUSH":
                 value = self.to_int(param)
                 if isinstance(value, numbers.Number):
@@ -55,21 +51,12 @@ class Runtime(object):
             elif cmd in operators.arithoperators or cmd in operators.logicaloperators:
                 num2 = self.value_stack.pop()
                 num1 = self.value_stack.pop()
-                # print type(num1)
-                # print type(num2)
-                # print "Num1 {} Cmd {} Num2 {}".format(num1, cmd, num2)
-                # value1 = self.to_int(num1)
-                # value2 = self.to_int(num2)
                 value1 = num1
                 value2 = num2
                 if not isinstance(value1, numbers.Number):
                     value1 = env_table[value1]
                 if not isinstance(value2, numbers.Number):
                     value2 = env_table[value2]
-                # print value1
-                # print value2
-                # if cmd == "LEQ":
-                #     print operators.dispatch[cmd](value1,value2)
                 self.value_stack.append(operators.dispatch[cmd](value1,value2))
             elif cmd == "ASSIGN":
                 num1 = self.value_stack.pop()
@@ -78,7 +65,6 @@ class Runtime(object):
                     env_table[num2] = num1
                 else:
                     env_table[num2] = env_table[num1]
-                # self.value_stack.append(num2)
             elif cmd == "FSTART":
                 func_name = param[0]
                 func_env_table = defaultdict()
@@ -121,15 +107,13 @@ class Runtime(object):
                         self.function_map[func_name].env_table[key] = value
                     else:
                         self.function_map[func_name].env_table[key] = env_table[value]
-                    print "{}, {}".format(key, env_table[value])
-                print "FUNCTIOn ENV"
-                print self.function_map[func_name].env_table.items()
+                    # print "{}, {}".format(key, env_table[value])
+                # print "FUNCTIOn ENV"
+                # print self.function_map[func_name].env_table.items()
                 env_table = self.function_map[func_name].env_table
                 return_stack.append(self.function_map[func_name])
                 call_line_num = line_num
                 return_stack.append(call_line_num)
-                # print "Func Env Table"
-                # print self.function_map[func_name]
                 skip = True
                 skip_num = self.function_map[func_name].start_line_num
             elif cmd == "PRINT":
@@ -143,46 +127,35 @@ class Runtime(object):
                     print param.replace("\"",''),
                 elif isinstance(param, numbers.Number):
                     print param
-                    # print param
                 else:
                     print env_table[param]
             elif cmd == "RETURN":
                 param = self.to_int(param)
-                # if isinstance(param, numbers.Number):
-                #     self.value_stack.append(param)
-                # print return_stack
                 if return_stack:
                     skip = True
                     skip_num = return_stack.pop() + 1
                     tmp_table = return_stack.pop()
-                    print "Function ENV: {}".format(tmp_table.env_table.items())
+                    # print "Function ENV: {}".format(tmp_table.env_table.items())
                     for key in tmp_table.env_table.keys():
                         self.main_env_table[key] = tmp_table.env_table[key]
                     if isinstance(param, numbers.Number):
                         self.value_stack.append(param)
                     else:
                         self.value_stack.append(self.main_env_table[param])
-                    # self.main_env_table[param] = env_table[param]
-                # skip_num = call_line_num + 1
             if skip:
                 line_num = skip_num
             else:
                  line_num += 1
-
-            print cmd
-            print self.value_stack
-            print env_table.items()
-            # print "LINE_NUM: {}".format(line_num)
-            # Debug code
+            # print cmd
             # print self.value_stack
             # print env_table.items()
             count += 1
-            if count > 500:
-                print "Breaking"
+            if count > MAX_RECURSION_DEPTH:
+                print "Breaking: MAX RECURSION DEPTH Reached"
                 break
-
         # except Exception as e:
         #     print e
+
     def to_int(self, value):
         try:
             return int(value)
@@ -194,5 +167,6 @@ class Runtime(object):
 
     def isFalse(self, value):
         return "False".lower() == value.lower()
-runtime = Runtime('FuncFactorial.in')
+
+runtime = Runtime('INTCode/Scoping.in')
 runtime.run()
