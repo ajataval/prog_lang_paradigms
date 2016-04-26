@@ -107,7 +107,10 @@ class Runtime(object):
                         self.function_map[func_name].env_table[key] = value
                     else:
                         self.function_map[func_name].env_table[key] = env_table[value]
-                    # print "{}, {}".format(key, env_table[value])
+
+                for key in self.main_env_table.keys():
+                    self.function_map[func_name].env_table[key] = self.main_env_table[key]
+                    print "{}, {}".format(key, env_table[value])
                 # print "FUNCTIOn ENV"
                 # print self.function_map[func_name].env_table.items()
                 env_table = self.function_map[func_name].env_table
@@ -142,6 +145,31 @@ class Runtime(object):
                         self.value_stack.append(param)
                     else:
                         self.value_stack.append(self.main_env_table[param])
+            elif cmd == "STACK":
+                self.main_env_table[param] = []
+                env_table[param] = []
+            elif cmd == "SPUSH":
+                stackid, data = param
+                value = self.to_int(data)
+                if isinstance(value, numbers.Number):
+                    self.main_env_table[stackid].append(value)
+                else:
+                    self.main_env_table[stackid].append(env_table[value])
+            elif cmd == "SPOP":
+                stackid = param
+                popped = self.main_env_table[stackid].pop()
+                print "Popped value: {}".format(popped)
+                self.value_stack.append(popped)
+            elif cmd == "SPEEK":
+                stackid = param
+                top = self.main_env_table[stackid][-1]
+                print "Top value: {}".format(top)
+                self.value_stack.append(top)
+            elif cmd == "SEMPTY":
+                stackid = param
+                stack_size = len(self.main_env_table[stackid])
+                self.value_stack.append(stack_size == 0)
+
             if skip:
                 line_num = skip_num
             else:
@@ -168,5 +196,5 @@ class Runtime(object):
     def isFalse(self, value):
         return "False".lower() == value.lower()
 
-runtime = Runtime('INTCode/Scoping.in')
+runtime = Runtime('INTCode/StackExample.in')
 runtime.run()
