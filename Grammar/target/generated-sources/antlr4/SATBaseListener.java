@@ -243,6 +243,18 @@ public class SATBaseListener implements SATListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParams1(SATParser.Params1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParams1(SATParser.Params1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterIni(SATParser.IniContext ctx) { }
 	/**
 	 * {@inheritDoc}

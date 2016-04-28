@@ -1,4 +1,5 @@
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -7,6 +8,18 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 public class SATWalker extends SATBaseListener
 {
 	StringBuilder build = new StringBuilder();
+	StringBuilder build1 = new StringBuilder();
+	ArrayList <String> A1 = new ArrayList<String>();
+	ArrayList modif = new ArrayList();
+	String name_params = new String();
+	String name = new String();
+	int index_if = 0;
+	int index_for = 0;
+	int counter = 0;
+	int ite_enter_no = 0;
+	int con_enter_no = 0;
+	int ite_exit_no = 0;
+	int con_exit_no = 0;
 	String filename = new String("C:\\Anoop_Stuff\\ASU\\Spring 2016\\LPP\\Proj 2\\Code\\INTERM.txt");
 	
 	@Override
@@ -20,8 +33,11 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		try {
 			PrintWriter writer = new PrintWriter( filename,"UTF-8");
-			writer.write(build.toString());
-			writer.close();
+			for(int i =0; i<A1.size();i++)
+			{
+				writer.write(A1.get(i).toString() + '\n');
+			}
+				writer.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -40,8 +56,9 @@ public class SATWalker extends SATBaseListener
 	public void exitFunction(SATParser.FunctionContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting function");
-		build.append("FEND");
-		build.append(System.getProperty("line.separator"));
+		A1.add("FEND");
+		counter++;
+		
 	}
 
 	@Override
@@ -49,6 +66,7 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("Entering funccall");
 		System.out.println(ctx.getText());
+		
 	}	
 
 	@Override
@@ -60,9 +78,14 @@ public class SATWalker extends SATBaseListener
 	@Override
 	public void enterName(SATParser.NameContext ctx) {
 		// TODO Auto-generated method stub
+		System.out.println("before setting" + build.toString());
+		build.setLength(0);
+		System.out.println("after setting" + build.toString());
 		System.out.println("entering name");
 		System.out.println(ctx.getText());
 		build.append("FSTART" + ' ' + ctx.getText());
+		name = ctx.getText();
+		System.out.println("after setting to fstart" + build.toString());
 		System.out.println("FSTART" + ' ' + ctx.getText());
 	}
 
@@ -130,13 +153,21 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering ASsiExp");
 		System.out.println(ctx.getText());
-		System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
+		A1.add("PUSH" + ' ' + ctx.ID());
+		counter++;
+		
+		
+
+		//System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
 	}
 
 	@Override
 	public void exitAssi_expr(SATParser.Assi_exprContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting ASsiExp");
+		A1.add("ASSIGN");
+		counter++;
+		
 	}
 
 	@Override
@@ -144,12 +175,18 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering conSt");
 		System.out.println(ctx.getText());
+		con_enter_no = counter;
 	}
 
 	@Override
 	public void exitCon_st(SATParser.Con_stContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting conSt");
+		con_exit_no = counter;
+		String temp = new String();
+		temp = "FAILGOTO" + ' ' + con_exit_no;
+		A1.set(index_if, temp);
+		
 	}
 
 	@Override
@@ -157,12 +194,27 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering iteSt");
 		System.out.println(ctx.getText());
+		ite_enter_no = counter + 3;
 	}
 
 	@Override
 	public void exitIte_st(SATParser.Ite_stContext ctx) {
 		// TODO Auto-generated method stub
-		System.out.println("exiting conSt");
+		for(int i =0;i <modif.size(); i++)
+		{
+			A1.add(modif.get(i).toString());
+			counter++;
+		}
+		System.out.println("exiting ITESt");
+		A1.add("PUSH FALSE");
+		counter++;
+		A1.add("FAILGOTO" + ' ' + ite_enter_no);
+		counter++;
+		ite_exit_no = counter;
+		String temp = new String();
+		temp = "FAILGOTO" + ' ' + ite_exit_no;
+		//System.out.print(index_for);
+		A1.set(index_for, temp);
 	}
 
 	@Override
@@ -183,27 +235,40 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering exp");
 		System.out.println(ctx.getText());
-		build.append("PUSH" + ' ' + ctx.simpleExp(0).getText());
-		build.append(System.getProperty("line.separator"));
-		build.append("PUSH" + ' ' + ctx.simpleExp(1).getText());
-		build.append(System.getProperty("line.separator"));
 		
-		System.out.println("PUSH" + ' ' + ctx.simpleExp(0).getText());
-		System.out.println("PUSH" + ' ' + ctx.simpleExp(1).getText());
+		for(int i =0; i<ctx.simpleExp().size(); i++)
+		{
+			A1.add("PUSH" + ' ' + ctx.simpleExp(i).getText());
+			counter++;
+		}
 		
 		
 		
 		if(ctx.RELOP().getText().equals("<"))
-			build.append("LESSER");
+			{
+			A1.add("LESSER");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals(">"))
-			build.append("GREATER");
+			{
+			A1.add("GREATER");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals("<="))
-			build.append("LEQ");
+			{
+			A1.add("LEQ");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals(">="))
-			build.append("GEQ");
+			{
+			A1.add("GEQ");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals("=="))
-			build.append("EQUAL");
-		build.append(System.getProperty("line.separator"));
+		{
+			A1.add("EQUAL");
+			counter++;
+		}
 		//System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
 		//System.out.println(ctx.RELOP().getText());
 	}
@@ -213,12 +278,53 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("exiting exp");
 	}
-
+	
 	@Override
 	public void enterTerm(SATParser.TermContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("entering term");
 		System.out.println(ctx.getText());
+		
+		for(int i =0; i< ctx.factor().size(); i++)
+		{
+			if(ctx.factor(i).getText().contains("("))
+				{
+				A1.add("CALL" + ' ' + name_params);
+				counter++;
+				}
+			else
+				{
+				A1.add("PUSH" + ' ' + ctx.factor(i).getText());
+				counter++;
+				}
+				
+		}
+		
+		
+		
+		
+		if(ctx.OP().toString().contains("+"))
+			{
+			A1.add("ADD");
+			counter++;
+			}
+		else if(ctx.OP().toString().contains("-"))
+			{
+			A1.add("SUB");
+			counter++;
+			}
+		else if(ctx.OP().toString().contains("*"))
+			{
+			A1.add("MUL");
+			counter++;
+			}
+		else if(ctx.OP().toString().contains("/"))
+			{
+			A1.add("DIV");		
+			counter++;
+			}
+		
+
 	}
 
 	@Override
@@ -232,6 +338,9 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering factor");
 		System.out.println(ctx.getText());
+		
+		
+		
 	}
 
 	@Override
@@ -245,30 +354,59 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering con");
 		System.out.println(ctx.getText());
-		build.append("PUSH" + ' ' + ctx.var(0).getText());
-		build.append(System.getProperty("line.separator"));
-		build.append("PUSH" + ' ' + ctx.var(1).getText());
-		build.append(System.getProperty("line.separator"));
+		A1.add("PUSH" + ' ' + ctx.var(0).getText());
+		counter++;
+		A1.add("PUSH" + ' ' + ctx.var(1).getText());
+		counter++;
 		
 		
 		
 		if(ctx.RELOP().getText().equals("<"))
-			build.append("LESSER");
+			{
+			A1.add("LESSER");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals(">"))
-			build.append("GREATER");
+			{
+			A1.add("GREATER");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals("<="))
-			build.append("LEQ");
+			{
+			A1.add("LEQ");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals(">="))
-			build.append("GEQ");
+			{
+			A1.add("GEQ");
+			counter++;
+			}
 		if(ctx.RELOP().getText().equals("=="))
-			build.append("EQUAL");
-		build.append(System.getProperty("line.separator"));
+			{
+			A1.add("EQUAL");
+			counter++;
+			}
+		
+		System.out.println("FINDING out who is john snows mother" + " " + ctx.parent.getText());
+		
+		if(ctx.parent.getText().contains("for("))
+			A1.add("FOR");
+			
+		if(ctx.parent.getText().contains("if("))
+			A1.add("IF");
+		
+		index_for = A1.indexOf("FOR");
+		System.out.println(index_for + ' ' + "asadsadasdasdasd" + A1.indexOf(index_for));
+		index_if = A1.indexOf("IF"); 
+	
+		counter++;
 	}
 
 	@Override
 	public void exitCon(SATParser.ConContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting con");
+		
 	}
 
 	@Override
@@ -276,14 +414,13 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering simExp");
 		System.out.println(ctx.getText());
-		
-		
-	}
+			}
 
 	@Override
 	public void exitSimpleExp(SATParser.SimpleExpContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting simExp");
+		
 	}
 
 	@Override
@@ -305,20 +442,27 @@ public class SATWalker extends SATBaseListener
 		System.out.println("entering params");
 		System.out.println(ctx.getText());
 		
+			build1.append(name + " ");
 			for(int i=0; i<ctx.ID().size(); i++)
 			{
+				if(i==0)
+					build1.append(ctx.ID(i));
+				else
+					build1.append("," + ctx.ID(i));
 				build.append(' ' + ctx.ID(i).getText());
-				
-				System.out.println(' ' + ctx.ID(i).getText());
-				
 			}
-		build.append(System.getProperty("line.seperator"));
+			name_params = build1.toString();
+			System.out.println("before adding to list" + build.toString());
+		A1.add(build.toString());
+		counter++;
+		System.out.println("after adding to list" + A1.toString());
 	}
 
 	@Override
 	public void exitParams(SATParser.ParamsContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting params");
+		
 	}
 
 	@Override
@@ -334,20 +478,36 @@ public class SATWalker extends SATBaseListener
 	public void exitIni(SATParser.IniContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting ini");
-		build.append("PUSH" + ' ' + ctx.ID());
-		build.append(System.getProperty("line.separator"));
-		build.append("PUSH" + ' ' + ctx.var().getText());
-		build.append(System.getProperty("line.separator"));
-		build.append("ASSIGN");
-		build.append(System.getProperty("line.separator"));
+		A1.add("PUSH" + ' ' + ctx.ID());
+		counter++;
+		A1.add("PUSH" + ' ' + ctx.var().getText());
+		counter++;
+		A1.add("ASSIGN");
+		counter++;
 	}
 
+	
 	@Override
 	public void enterModif(SATParser.ModifContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("entering modif");
-		System.out.println(ctx.getText());
-		System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
+		
+		modif.add("PUSH" + ' ' + ctx.ID());
+		
+		modif.add("PUSH" + ' ' +ctx.var(0).getText());
+		
+		modif.add("PUSH" + ' ' + ctx.var(1).getText());
+		
+		System.out.println("PUSHED");
+		if(ctx.OP().getText().equals("+"))
+			modif.add("ADD");
+		if(ctx.OP().getText().equals("-"))
+			modif.add("SUB");
+		
+		
+		modif.add("ASSIGN");
+		
+		//System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
 	}
 
 	@Override

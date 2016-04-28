@@ -197,6 +197,16 @@ public interface SATListener extends ParseTreeListener {
 	 */
 	void exitParams(SATParser.ParamsContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SATParser#params1}.
+	 * @param ctx the parse tree
+	 */
+	void enterParams1(SATParser.Params1Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#params1}.
+	 * @param ctx the parse tree
+	 */
+	void exitParams1(SATParser.Params1Context ctx);
+	/**
 	 * Enter a parse tree produced by {@link SATParser#ini}.
 	 * @param ctx the parse tree
 	 */
