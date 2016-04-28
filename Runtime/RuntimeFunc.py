@@ -107,6 +107,9 @@ class Runtime(object):
                         self.function_map[func_name].env_table[key] = value
                     else:
                         self.function_map[func_name].env_table[key] = env_table[value]
+                for key, value in self.main_env_table.items():
+                    if key not in self.function_map[func_name].env_table.keys() and not isinstance(key, numbers.Number):
+                        self.function_map[func_name].env_table[key] = value
 
                 # for key in self.main_env_table.keys():
                 #     self.function_map[func_name].env_table[key] = self.main_env_table[key]
@@ -196,5 +199,5 @@ class Runtime(object):
     def isFalse(self, value):
         return "False".lower() == value.lower()
 
-runtime = Runtime('INTCode/RecursiveExpo.in')
+runtime = Runtime('INTCode/Scoping.in')
 runtime.run()
