@@ -10,12 +10,16 @@ function: rtType 'func' name '(' params ')'
 
 funcCall : ID '(' params1 ')' ;
 
+returna: 'return' var ;
+
 name: 'main'|ID;
+print: 'print' var ;
 rtType: 'void'|'int';
 st_list: st+;
-st: sim_st | con_st | ite_st| com_st ;
-sim_st: exp+|assi_expr;
-assi_expr: ID '=' simpleExp;
+st: funcCall|sim_st | con_st | ite_st| com_st;
+sim_st: (exp+ |assi_expr|returna |print) ';' ;
+
+assi_expr: ID '=' simpleExp | funcCall ;
 
 con_st: 'if' '(' con ')' com_st ('else' com_st)?;
 ite_st: 'for' '(' ini ';' con ';' modif ')' com_st;
@@ -28,7 +32,7 @@ con: var RELOP var;
 simpleExp: term (OP term)*;
 dt: 'int'|'bool';
 params: ((dt ID)? (',' dt ID)*);
-params1: ID (','ID)*;
+params1: var (','var)*;
 ini: ID '=' var; 
 OP: ('+' | '-' | '*' | '/');
 //ADDING_OPERATOR: ('+' | '-');

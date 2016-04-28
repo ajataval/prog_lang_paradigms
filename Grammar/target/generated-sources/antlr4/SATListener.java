@@ -37,6 +37,16 @@ public interface SATListener extends ParseTreeListener {
 	 */
 	void exitFuncCall(SATParser.FuncCallContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SATParser#returna}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturna(SATParser.ReturnaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#returna}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturna(SATParser.ReturnaContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SATParser#name}.
 	 * @param ctx the parse tree
 	 */
@@ -46,6 +56,16 @@ public interface SATListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitName(SATParser.NameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SATParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrint(SATParser.PrintContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrint(SATParser.PrintContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SATParser#rtType}.
 	 * @param ctx the parse tree

@@ -51,6 +51,18 @@ public class SATBaseListener implements SATListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterReturna(SATParser.ReturnaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReturna(SATParser.ReturnaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterName(SATParser.NameContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -58,6 +70,18 @@ public class SATBaseListener implements SATListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitName(SATParser.NameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrint(SATParser.PrintContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrint(SATParser.PrintContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

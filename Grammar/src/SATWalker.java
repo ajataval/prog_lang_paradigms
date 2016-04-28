@@ -9,9 +9,11 @@ public class SATWalker extends SATBaseListener
 {
 	StringBuilder build = new StringBuilder();
 	StringBuilder build1 = new StringBuilder();
+	StringBuilder temp_build1 = new StringBuilder();
 	ArrayList <String> A1 = new ArrayList<String>();
 	ArrayList modif = new ArrayList();
 	String name_params = new String();
+	String temp_name_params = new String();
 	String name = new String();
 	int index_if = 0;
 	int index_for = 0;
@@ -45,6 +47,8 @@ public class SATWalker extends SATBaseListener
 	}
 
 	@Override
+	
+	
 	public void enterFunction(SATParser.FunctionContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("Entering function");
@@ -56,6 +60,7 @@ public class SATWalker extends SATBaseListener
 	public void exitFunction(SATParser.FunctionContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting function");
+		
 		A1.add("FEND");
 		counter++;
 		
@@ -65,7 +70,13 @@ public class SATWalker extends SATBaseListener
 	public void enterFuncCall(SATParser.FuncCallContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("Entering funccall");
-		System.out.println(ctx.getText());
+		System.out.println(ctx.ID() + " ID");
+		System.out.println(ctx.params1().getText() + " params");
+		temp_build1.append(ctx.ID());
+		temp_build1.append(' ' + ctx.params1().getText());
+		
+		temp_name_params = temp_build1.toString();
+		temp_build1.setLength(0);
 		
 	}	
 
@@ -103,12 +114,34 @@ public class SATWalker extends SATBaseListener
 		System.out.println(ctx.getText());
 	}
 
+	
+	
+	
 	@Override
 	public void exitRtType(SATParser.RtTypeContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting rttype");
 	}
 
+	@Override public void enterReturna(SATParser.ReturnaContext ctx) 
+	{
+		
+	}
+
+	@Override public void exitReturna(SATParser.ReturnaContext ctx) 
+	{
+		
+		
+			A1.add("RETURN" + ' ' + ctx.var().getText().toString());
+			counter++;	
+		
+		
+		
+	}
+	
+	
+	
+	
 	@Override
 	public void enterSt_list(SATParser.St_listContext ctx) {
 		// TODO Auto-generated method stub
@@ -152,9 +185,10 @@ public class SATWalker extends SATBaseListener
 	public void enterAssi_expr(SATParser.Assi_exprContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("entering ASsiExp");
-		System.out.println(ctx.getText());
-		A1.add("PUSH" + ' ' + ctx.ID());
-		counter++;
+		//System.out.println(ctx.getText() + "assignmet");
+				//System.out.println(ctx.fun);
+			A1.add("PUSH" + ' ' + ctx.ID());
+			counter++;
 		
 		
 
@@ -279,17 +313,75 @@ public class SATWalker extends SATBaseListener
 		System.out.println("exiting exp");
 	}
 	
+	@Override public void enterPrint(SATParser.PrintContext ctx) 
+	{ 
+		
+	}
+	
+	@Override public void exitPrint(SATParser.PrintContext ctx) 
+	{
+		A1.add("PRINT" + ' ' + ctx.var().getText().toString());
+		counter++;
+	}
+	
+	
 	@Override
 	public void enterTerm(SATParser.TermContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("entering term");
 		System.out.println(ctx.getText());
 		
+//		for(int i =0; i< ctx.factor().size(); i++)
+//		{
+//			if(ctx.factor(i).getText().contains("("))
+//				{
+//				A1.add("CALL" + ' ' + temp_name_params);
+//				counter++;
+//				}
+//			else
+//				{
+//				A1.add("PUSH" + ' ' + ctx.factor(i).getText());
+//				counter++;
+//				}
+//				
+//		}
+//		
+//		
+//		
+//		
+//		if(ctx.OP().toString().contains("+"))
+//			{
+//			A1.add("ADD");
+//			counter++;
+//			}
+//		else if(ctx.OP().toString().contains("-"))
+//			{
+//			A1.add("SUB");
+//			counter++;
+//			}
+//		else if(ctx.OP().toString().contains("*"))
+//			{
+//			A1.add("MUL");
+//			counter++;
+//			}
+//		else if(ctx.OP().toString().contains("/"))
+//			{
+//			A1.add("DIV");		
+//			counter++;
+//			}
+		
+
+	}
+
+	@Override
+	public void exitTerm(SATParser.TermContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println("exiting term");
 		for(int i =0; i< ctx.factor().size(); i++)
 		{
 			if(ctx.factor(i).getText().contains("("))
 				{
-				A1.add("CALL" + ' ' + name_params);
+				A1.add("CALL" + ' ' + temp_name_params);
 				counter++;
 				}
 			else
@@ -323,14 +415,6 @@ public class SATWalker extends SATBaseListener
 			A1.add("DIV");		
 			counter++;
 			}
-		
-
-	}
-
-	@Override
-	public void exitTerm(SATParser.TermContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting term");
 	}
 
 	@Override
