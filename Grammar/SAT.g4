@@ -11,19 +11,21 @@ function: rtType 'func' name '(' params ')'
 funcCall : ID '(' params1 ')' ;
 
 returna: 'return' var ;
-
+stack_st:'push' '('ID ',' NUM ')'| 'peek' '(' ID ')' | 'pop' '(' ID ')'| 'isempty' '(' ID ')';
+decl_st:dt ID ;
 name: 'main'|ID;
 print: 'print' var ;
 rtType: 'void'|'int';
 st_list: st+;
 st: funcCall|sim_st | con_st | ite_st| com_st;
 sim_st: (exp+ |assi_expr|returna |print|decl_st|stack_st) ';' ;
-stack_st:'push('ID','NUM')'|'peek('ID')'|'pop('ID')'|'isempty('ID')';
-decl_st:dt ID ;
+
 assi_expr: ID '=' simpleExp | funcCall ;
 
-con_st: 'if' '(' con ')' com_st ('else' com_st)?;
-ite_st: 'for' '(' ini ';' con ';' modif ')' com_st;
+con_st: if_st (else_st)?;
+if_st : 'if' '(' con ')' com_st ;
+else_st : 'else' com_st ;
+ite_st : 'for' '(' ini ';' con ';' modif ')' com_st;
 com_st: '{' st_list '}';
 exp : simpleExp (RELOP simpleExp)?;
 term: factor (OP factor)*; 

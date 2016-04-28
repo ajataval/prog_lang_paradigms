@@ -1,11 +1,10 @@
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
-
 
 public class SATWalker extends SATBaseListener
 {
@@ -17,7 +16,9 @@ public class SATWalker extends SATBaseListener
 	String name_params = new String();
 	String temp_name_params = new String();
 	String name = new String();
-	StringBuilder stack_sb = new StringBuilder();
+	int skip_else =0;
+	int index_else = 0;
+	int skip_if =0;
 	int index_if = 0;
 	int index_for = 0;
 	int counter = 0;
@@ -25,7 +26,12 @@ public class SATWalker extends SATBaseListener
 	int con_enter_no = 0;
 	int ite_exit_no = 0;
 	int con_exit_no = 0;
-	String filename = new String("D:\\spring16\\proglangprncpls\\INTERM.txt");
+	Stack <Integer> if_stack = new Stack<Integer>();
+	Stack <Integer> for_stack = new Stack<Integer>();
+	Stack <Integer> ite_exit = new Stack <Integer>();
+	Stack <ArrayList> modif_stack = new Stack<ArrayList>();
+	StringBuilder stack_sb = new StringBuilder();
+	String filename = new String("C:\\Anoop_Stuff\\ASU\\Spring 2016\\LPP\\Proj 2\\Code\\INTERM.txt");
 	
 	@Override
 	public void enterMain(SATParser.MainContext ctx) {
@@ -36,10 +42,6 @@ public class SATWalker extends SATBaseListener
 	@Override
 	public void exitMain(SATParser.MainContext ctx) {
 		// TODO Auto-generated method stub
-		
-		
-		
-		
 		try {
 			PrintWriter writer = new PrintWriter( filename,"UTF-8");
 			for(int i =0; i<A1.size();i++)
@@ -51,7 +53,6 @@ public class SATWalker extends SATBaseListener
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(stack_sb);
 	}
 
 	@Override
@@ -61,6 +62,21 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("Entering function");
 		System.out.println(ctx.getText());
+		
+	}
+
+	@Override
+	public void exitFunction(SATParser.FunctionContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println("exiting function");
+		
+		String[] s = stack_sb.toString().split("\\n");
+		for(String each_s: s){
+			A1.add(each_s);
+		}
+		
+		A1.add("FEND");
+		counter++;
 		
 	}
 
@@ -117,34 +133,7 @@ public class SATWalker extends SATBaseListener
 			
 		}*/
 	}
-
-	@Override
-	public void enterParams1(SATParser.Params1Context ctx) {
-		// TODO Auto-generated method stub
-		super.enterParams1(ctx);
-	}
-
-	@Override
-	public void exitParams1(SATParser.Params1Context ctx) {
-		// TODO Auto-generated method stub
-		super.exitParams1(ctx);
-	}
-
-	@Override
-	public void exitFunction(SATParser.FunctionContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting function");
-		
-		String[] s = stack_sb.toString().split("\\n");
-		for(String each_s: s){
-			A1.add(each_s);
-		}
-		
-		A1.add("FEND");
-		counter++;
-		
-	}
-
+	
 	@Override
 	public void enterFuncCall(SATParser.FuncCallContext ctx) {
 		// TODO Auto-generated method stub
@@ -288,18 +277,59 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering conSt");
 		System.out.println(ctx.getText());
-		con_enter_no = counter;
+		
 	}
 
 	@Override
 	public void exitCon_st(SATParser.Con_stContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting conSt");
-		con_exit_no = counter;
-		String temp = new String();
-		temp = "FAILGOTO" + ' ' + con_exit_no;
-		A1.set(index_if, temp);
+//		con_exit_no = counter;
+//		String temp = new String();
+//		temp = "FAILGOTO" + ' ' + con_exit_no;
+//		A1.set(index_if, temp);
 		
+	}
+	
+	@Override public void enterIf_st(SATParser.If_stContext ctx) 
+	{
+		
+		//con_enter_no = counter;
+	}
+	
+	@Override public void exitIf_st(SATParser.If_stContext ctx) 
+	{
+		//con_exit_no = counter;
+		//skip_else = counter;
+		
+		//temp = "FAILGOTO" + ' ' + con_exit_no;
+		
+		String temp = new String();
+		A1.add("PUSH FALSE");
+		counter++;
+	
+		A1.add("FAILGOTO" + ' '+ skip_else);
+		index_else = counter;
+		counter++;
+		skip_if = counter;
+		int temp_index_if = if_stack.pop();
+		temp = "FAILGOTO" + ' ' + skip_if;
+		A1.set(temp_index_if, temp);
+	}
+	
+	@Override public void enterElse_st(SATParser.Else_stContext ctx) 
+	{
+		skip_if = counter;
+	}
+	
+	@Override public void exitElse_st(SATParser.Else_stContext ctx) 
+	{
+		//skip_if = counter;
+		String temp = new String();
+		//temp = "FAILGOTO" + ' ' + con_exit_no;
+		skip_else = counter;
+		temp = "FAILGOTO" + ' ' + skip_else;
+		A1.set(index_else, temp);
 	}
 
 	@Override
@@ -307,28 +337,45 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering iteSt");
 		System.out.println(ctx.getText());
-		ite_enter_no = counter + 3;
+		//ite_enter_no = counter + 3;
 	}
 
 	@Override
 	public void exitIte_st(SATParser.Ite_stContext ctx) {
 		// TODO Auto-generated method stub
-		for(int i =0;i <modif.size(); i++)
+		ArrayList temp = new ArrayList ();
+		
+		Stack <ArrayList> s = new Stack <ArrayList> (); 
+		
+		s.addAll(modif_stack);
+		System.out.println(s.size());
+		while(!s.isEmpty())
 		{
-			A1.add(modif.get(i).toString());
+			System.out.println("HHHHHHH" + ' ' + s.pop().get(0));
+		}
+		temp = modif_stack.pop();
+		System.out.println("POP" + ' ' + temp.get(0) + " HAHAHA" + modif_stack.size());
+		for(int i =0;i <temp.size(); i++)
+		{
+			A1.add(temp.get(i).toString());
 			counter++;
 		}
 		System.out.println("exiting ITESt");
 		A1.add("PUSH FALSE");
 		counter++;
-		A1.add("FAILGOTO" + ' ' + ite_enter_no);
+		int idx = for_stack.pop();
+		A1.add("FAILGOTO" + ' ' + idx);
 		counter++;
 		ite_exit_no = counter;
-		String temp = new String();
-		temp = "FAILGOTO" + ' ' + ite_exit_no;
+		String temp1 = new String();
+		temp1 = "FAILGOTO" + ' ' + ite_exit_no;
 		//System.out.print(index_for);
-		A1.set(index_for, temp);
+		int temp_index_for = idx + 3;
+		A1.set(temp_index_for, temp1);
 	}
+
+	
+	
 
 	@Override
 	public void enterCom_st(SATParser.Com_stContext ctx) {
@@ -517,6 +564,8 @@ public class SATWalker extends SATBaseListener
 		// TODO Auto-generated method stub
 		System.out.println("entering con");
 		System.out.println(ctx.getText());
+		for_stack.push(counter);
+		
 		A1.add("PUSH" + ' ' + ctx.var(0).getText());
 		counter++;
 		A1.add("PUSH" + ' ' + ctx.var(1).getText());
@@ -552,17 +601,22 @@ public class SATWalker extends SATBaseListener
 		
 		System.out.println("FINDING out who is john snows mother" + " " + ctx.parent.getText());
 		
-		if(ctx.parent.getText().contains("for("))
-			A1.add("FOR");
-			
-		if(ctx.parent.getText().contains("if("))
-			A1.add("IF");
-		
-		index_for = A1.indexOf("FOR");
-		System.out.println(index_for + ' ' + "asadsadasdasdasd" + A1.indexOf(index_for));
-		index_if = A1.indexOf("IF"); 
-	
+//		if(ctx.parent.getText().contains("for("))
+//			A1.add("FOR");
+//			
+//		if(ctx.parent.getText().contains("if("))
+//			A1.add("IF");
+//		
+		index_if = counter;
+		index_for = counter;
+		if_stack.push(index_if);
+		//for_stack.push(index_for);
+		A1.add("FAILGOTO" + ' ');
 		counter++;
+		//index_for = A1.indexOf("FOR");
+		System.out.println(index_for + ' ' + "asadsadasdasdasd" + A1.indexOf(index_for));
+		 
+	
 	}
 
 	@Override
@@ -654,22 +708,25 @@ public class SATWalker extends SATBaseListener
 	public void enterModif(SATParser.ModifContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("entering modif");
+		ArrayList tmodif = new ArrayList();
+//		modif.clear();
+		tmodif.add("PUSH" + ' ' + ctx.ID());
 		
-		modif.add("PUSH" + ' ' + ctx.ID());
+		tmodif.add("PUSH" + ' ' +ctx.var(0).getText());
 		
-		modif.add("PUSH" + ' ' +ctx.var(0).getText());
-		
-		modif.add("PUSH" + ' ' + ctx.var(1).getText());
+		tmodif.add("PUSH" + ' ' + ctx.var(1).getText());
 		
 		System.out.println("PUSHED");
 		if(ctx.OP().getText().equals("+"))
-			modif.add("ADD");
+			tmodif.add("ADD");
 		if(ctx.OP().getText().equals("-"))
-			modif.add("SUB");
+			tmodif.add("SUB");
 		
 		
-		modif.add("ASSIGN");
+		tmodif.add("ASSIGN");
 		
+		modif_stack.push(tmodif);
+		System.out.println("BLAJAHAHAHA" + tmodif.get(0));
 		//System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
 	}
 

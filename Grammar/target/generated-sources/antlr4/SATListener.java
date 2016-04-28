@@ -47,6 +47,26 @@ public interface SATListener extends ParseTreeListener {
 	 */
 	void exitReturna(SATParser.ReturnaContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SATParser#stack_st}.
+	 * @param ctx the parse tree
+	 */
+	void enterStack_st(SATParser.Stack_stContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#stack_st}.
+	 * @param ctx the parse tree
+	 */
+	void exitStack_st(SATParser.Stack_stContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SATParser#decl_st}.
+	 * @param ctx the parse tree
+	 */
+	void enterDecl_st(SATParser.Decl_stContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#decl_st}.
+	 * @param ctx the parse tree
+	 */
+	void exitDecl_st(SATParser.Decl_stContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SATParser#name}.
 	 * @param ctx the parse tree
 	 */
@@ -107,26 +127,6 @@ public interface SATListener extends ParseTreeListener {
 	 */
 	void exitSim_st(SATParser.Sim_stContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SATParser#stack_st}.
-	 * @param ctx the parse tree
-	 */
-	void enterStack_st(SATParser.Stack_stContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SATParser#stack_st}.
-	 * @param ctx the parse tree
-	 */
-	void exitStack_st(SATParser.Stack_stContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SATParser#decl_st}.
-	 * @param ctx the parse tree
-	 */
-	void enterDecl_st(SATParser.Decl_stContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SATParser#decl_st}.
-	 * @param ctx the parse tree
-	 */
-	void exitDecl_st(SATParser.Decl_stContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link SATParser#assi_expr}.
 	 * @param ctx the parse tree
 	 */
@@ -146,6 +146,26 @@ public interface SATListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCon_st(SATParser.Con_stContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SATParser#if_st}.
+	 * @param ctx the parse tree
+	 */
+	void enterIf_st(SATParser.If_stContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#if_st}.
+	 * @param ctx the parse tree
+	 */
+	void exitIf_st(SATParser.If_stContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SATParser#else_st}.
+	 * @param ctx the parse tree
+	 */
+	void enterElse_st(SATParser.Else_stContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#else_st}.
+	 * @param ctx the parse tree
+	 */
+	void exitElse_st(SATParser.Else_stContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SATParser#ite_st}.
 	 * @param ctx the parse tree
