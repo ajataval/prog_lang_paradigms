@@ -107,6 +107,26 @@ public interface SATListener extends ParseTreeListener {
 	 */
 	void exitSim_st(SATParser.Sim_stContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SATParser#stack_st}.
+	 * @param ctx the parse tree
+	 */
+	void enterStack_st(SATParser.Stack_stContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#stack_st}.
+	 * @param ctx the parse tree
+	 */
+	void exitStack_st(SATParser.Stack_stContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SATParser#decl_st}.
+	 * @param ctx the parse tree
+	 */
+	void enterDecl_st(SATParser.Decl_stContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SATParser#decl_st}.
+	 * @param ctx the parse tree
+	 */
+	void exitDecl_st(SATParser.Decl_stContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SATParser#assi_expr}.
 	 * @param ctx the parse tree
 	 */

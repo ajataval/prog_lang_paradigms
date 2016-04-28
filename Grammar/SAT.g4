@@ -17,8 +17,9 @@ print: 'print' var ;
 rtType: 'void'|'int';
 st_list: st+;
 st: funcCall|sim_st | con_st | ite_st| com_st;
-sim_st: (exp+ |assi_expr|returna |print) ';' ;
-
+sim_st: (exp+ |assi_expr|returna |print|decl_st|stack_st) ';' ;
+stack_st:'push('ID','NUM')'|'peek('ID')'|'pop('ID')'|'isempty('ID')';
+decl_st:dt ID ;
 assi_expr: ID '=' simpleExp | funcCall ;
 
 con_st: 'if' '(' con ')' com_st ('else' com_st)?;
@@ -30,7 +31,7 @@ factor : (NUM | ID | '(' exp ')') |funcCall;
 con: var RELOP var;
 
 simpleExp: term (OP term)*;
-dt: 'int'|'bool';
+dt: 'int'|'bool'|'stack';
 params: ((dt ID)? (',' dt ID)*);
 params1: var (','var)*;
 ini: ID '=' var; 

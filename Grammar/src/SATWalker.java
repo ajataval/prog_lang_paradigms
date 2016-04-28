@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+
+
 public class SATWalker extends SATBaseListener
 {
 	StringBuilder build = new StringBuilder();
@@ -15,6 +17,7 @@ public class SATWalker extends SATBaseListener
 	String name_params = new String();
 	String temp_name_params = new String();
 	String name = new String();
+	StringBuilder stack_sb = new StringBuilder();
 	int index_if = 0;
 	int index_for = 0;
 	int counter = 0;
@@ -22,7 +25,7 @@ public class SATWalker extends SATBaseListener
 	int con_enter_no = 0;
 	int ite_exit_no = 0;
 	int con_exit_no = 0;
-	String filename = new String("C:\\Anoop_Stuff\\ASU\\Spring 2016\\LPP\\Proj 2\\Code\\INTERM.txt");
+	String filename = new String("D:\\spring16\\proglangprncpls\\INTERM.txt");
 	
 	@Override
 	public void enterMain(SATParser.MainContext ctx) {
@@ -33,6 +36,10 @@ public class SATWalker extends SATBaseListener
 	@Override
 	public void exitMain(SATParser.MainContext ctx) {
 		// TODO Auto-generated method stub
+		
+		
+		
+		
 		try {
 			PrintWriter writer = new PrintWriter( filename,"UTF-8");
 			for(int i =0; i<A1.size();i++)
@@ -44,6 +51,7 @@ public class SATWalker extends SATBaseListener
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println(stack_sb);
 	}
 
 	@Override
@@ -57,9 +65,80 @@ public class SATWalker extends SATBaseListener
 	}
 
 	@Override
+	public void enterStack_st(SATParser.Stack_stContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println("Entering Stack!");
+		if(ctx.getText().toString().contains("push")){
+			stack_sb.append("SPUSH "+ ctx.ID()+','+ctx.NUM());
+			stack_sb.append("\n");
+		}
+		else if(ctx.getText().toString().contains("pop")){
+			stack_sb.append("SPOP "+ ctx.ID());
+			stack_sb.append("\n");
+		}
+		else if(ctx.getText().toString().contains("peek")){
+			stack_sb.append("SPEEK "+ ctx.ID());
+			stack_sb.append("\n");
+		}
+		else{
+		stack_sb.append("SEMPTY "+ ctx.ID());
+		stack_sb.append("\n");
+		}
+	}
+
+	@Override
+	public void exitStack_st(SATParser.Stack_stContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println("Exiting Stack!");
+	}
+
+	@Override
+	public void enterDecl_st(SATParser.Decl_stContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println("Entering Declaring Statement!");
+		System.out.println(ctx.getText());
+		
+		if(ctx.getText().toString().contains("stack")){
+			stack_sb.append("STACK "+ctx.ID());
+			stack_sb.append("\n");
+		}
+		System.out.println(stack_sb.toString());
+	}
+
+	@Override
+	public void exitDecl_st(SATParser.Decl_stContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println("Exiting Declaring Statement!");
+		/*if(ctx.getText().toString().contains("stack")){
+			String[] s = stack_sb.toString().split("\\n");
+			for(String each_s: s){
+				A1.add(each_s);
+			}
+			
+		}*/
+	}
+
+	@Override
+	public void enterParams1(SATParser.Params1Context ctx) {
+		// TODO Auto-generated method stub
+		super.enterParams1(ctx);
+	}
+
+	@Override
+	public void exitParams1(SATParser.Params1Context ctx) {
+		// TODO Auto-generated method stub
+		super.exitParams1(ctx);
+	}
+
+	@Override
 	public void exitFunction(SATParser.FunctionContext ctx) {
 		// TODO Auto-generated method stub
 		System.out.println("exiting function");
+		
+		String[] s = stack_sb.toString().split("\\n");
+		for(String each_s: s){
+			A1.add(each_s);
+		}
 		
 		A1.add("FEND");
 		counter++;
