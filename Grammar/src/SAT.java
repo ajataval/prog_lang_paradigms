@@ -22,7 +22,7 @@ public class SAT {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         SATParser parser = new SATParser(tokens);
         	
-        ParseTree parsetree = parser.main();
+        ParseTree parsetree = parser.start();
         ParseTreeWalker walker = new ParseTreeWalker();
         SATWalker listener = new SATWalker();
         walker.walk(listener, parsetree);
