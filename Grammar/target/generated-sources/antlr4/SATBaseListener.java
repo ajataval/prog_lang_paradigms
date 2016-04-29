@@ -15,13 +15,13 @@ public class SATBaseListener implements SATListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMain(SATParser.MainContext ctx) { }
+	@Override public void enterStart(SATParser.StartContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMain(SATParser.MainContext ctx) { }
+	@Override public void exitStart(SATParser.StartContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
