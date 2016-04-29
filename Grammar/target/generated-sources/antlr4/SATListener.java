@@ -7,15 +7,15 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface SATListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link SATParser#main}.
+	 * Enter a parse tree produced by {@link SATParser#start}.
 	 * @param ctx the parse tree
 	 */
-	void enterMain(SATParser.MainContext ctx);
+	void enterStart(SATParser.StartContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SATParser#main}.
+	 * Exit a parse tree produced by {@link SATParser#start}.
 	 * @param ctx the parse tree
 	 */
-	void exitMain(SATParser.MainContext ctx);
+	void exitStart(SATParser.StartContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SATParser#function}.
 	 * @param ctx the parse tree

@@ -34,14 +34,14 @@ public class SATWalker extends SATBaseListener
 	String filename = new String("C:\\Anoop_Stuff\\ASU\\Spring 2016\\LPP\\Proj 2\\Code\\INTERM.txt");
 	
 	@Override
-	public void enterMain(SATParser.MainContext ctx) {
-		// TODO Auto-generated method stub
-		super.enterMain(ctx);
+	public void enterStart(SATParser.StartContext ctx) {
+		
+		super.enterStart(ctx);
 	}
 
 	@Override
-	public void exitMain(SATParser.MainContext ctx) {
-		// TODO Auto-generated method stub
+	public void exitStart(SATParser.StartContext ctx) {
+		
 		try {
 			PrintWriter writer = new PrintWriter( filename,"UTF-8");
 			for(int i =0; i<A1.size();i++)
@@ -50,7 +50,7 @@ public class SATWalker extends SATBaseListener
 			}
 				writer.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -59,31 +59,31 @@ public class SATWalker extends SATBaseListener
 	
 	
 	public void enterFunction(SATParser.FunctionContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("Entering function");
-		System.out.println(ctx.getText());
-		
+			
 	}
 
 	@Override
 	public void exitFunction(SATParser.FunctionContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting function");
+		
 		
 		String[] s = stack_sb.toString().split("\\n");
+		if(s.length > 1)
+		{
 		for(String each_s: s){
 			A1.add(each_s);
 		}
-		
+		}
+		if(!ctx.getText().toString().contains("main"))
+		{
 		A1.add("FEND");
 		counter++;
-		
+		}
 	}
 
 	@Override
 	public void enterStack_st(SATParser.Stack_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("Entering Stack!");
+		
+		
 		if(ctx.getText().toString().contains("push")){
 			stack_sb.append("SPUSH "+ ctx.ID()+','+ctx.NUM());
 			stack_sb.append("\n");
@@ -104,42 +104,29 @@ public class SATWalker extends SATBaseListener
 
 	@Override
 	public void exitStack_st(SATParser.Stack_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("Exiting Stack!");
+		
 	}
 
 	@Override
 	public void enterDecl_st(SATParser.Decl_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("Entering Declaring Statement!");
-		System.out.println(ctx.getText());
+		
 		
 		if(ctx.getText().toString().contains("stack")){
 			stack_sb.append("STACK "+ctx.ID());
 			stack_sb.append("\n");
 		}
-		System.out.println(stack_sb.toString());
+		
 	}
 
 	@Override
 	public void exitDecl_st(SATParser.Decl_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("Exiting Declaring Statement!");
-		/*if(ctx.getText().toString().contains("stack")){
-			String[] s = stack_sb.toString().split("\\n");
-			for(String each_s: s){
-				A1.add(each_s);
-			}
-			
-		}*/
+		
 	}
 	
 	@Override
 	public void enterFuncCall(SATParser.FuncCallContext ctx) {
 		// TODO Auto-generated method stub
-		System.out.println("Entering funccall");
-		System.out.println(ctx.ID() + " ID");
-		System.out.println(ctx.params1().getText() + " params");
+		
 		temp_build1.append(ctx.ID());
 		temp_build1.append(' ' + ctx.params1().getText());
 		
@@ -150,36 +137,30 @@ public class SATWalker extends SATBaseListener
 
 	@Override
 	public void exitFuncCall(SATParser.FuncCallContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting funccall");
+		
 	}
 
 	@Override
 	public void enterName(SATParser.NameContext ctx) {
 		// TODO Auto-generated method stub
-		System.out.println("before setting" + build.toString());
+		
 		build.setLength(0);
-		System.out.println("after setting" + build.toString());
-		System.out.println("entering name");
-		System.out.println(ctx.getText());
+		if(!ctx.getText().toString().contains("main"))
+		{
 		build.append("FSTART" + ' ' + ctx.getText());
 		name = ctx.getText();
-		System.out.println("after setting to fstart" + build.toString());
-		System.out.println("FSTART" + ' ' + ctx.getText());
+		}
 	}
 
 	@Override
 	public void exitName(SATParser.NameContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting name");
+		
 		
 	}
 
 	@Override
 	public void enterRtType(SATParser.RtTypeContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering rttype");
-		System.out.println(ctx.getText());
+		
 	}
 
 	
@@ -187,8 +168,7 @@ public class SATWalker extends SATBaseListener
 	
 	@Override
 	public void exitRtType(SATParser.RtTypeContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting rttype");
+		
 	}
 
 	@Override public void enterReturna(SATParser.ReturnaContext ctx) 
@@ -202,9 +182,7 @@ public class SATWalker extends SATBaseListener
 		
 			A1.add("RETURN" + ' ' + ctx.var().getText().toString());
 			counter++;	
-		
-		
-		
+	
 	}
 	
 	
@@ -212,61 +190,45 @@ public class SATWalker extends SATBaseListener
 	
 	@Override
 	public void enterSt_list(SATParser.St_listContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering stlist");
-		System.out.println(ctx.getText());
+		
 	}
 
 	@Override
 	public void exitSt_list(SATParser.St_listContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting stlist");
+		
 	}
 
 	@Override
 	public void enterSt(SATParser.StContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entring st");
-		System.out.println(ctx.getText());
+		
 	}
 
 	@Override
 	public void exitSt(SATParser.StContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting st");
+		
 	}
 
 	@Override
 	public void enterSim_st(SATParser.Sim_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering simSt");
-		System.out.println(ctx.getText());
+		
 	}
 
 	@Override
 	public void exitSim_st(SATParser.Sim_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting simSt");
+		
 	}
 
 	@Override
 	public void enterAssi_expr(SATParser.Assi_exprContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering ASsiExp");
-		//System.out.println(ctx.getText() + "assignmet");
-				//System.out.println(ctx.fun);
+		
 			A1.add("PUSH" + ' ' + ctx.ID());
 			counter++;
 		
 		
-
-		//System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
 	}
 
 	@Override
 	public void exitAssi_expr(SATParser.Assi_exprContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting ASsiExp");
 		A1.add("ASSIGN");
 		counter++;
 		
@@ -274,36 +236,23 @@ public class SATWalker extends SATBaseListener
 
 	@Override
 	public void enterCon_st(SATParser.Con_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering conSt");
-		System.out.println(ctx.getText());
 		
 	}
 
 	@Override
 	public void exitCon_st(SATParser.Con_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting conSt");
-//		con_exit_no = counter;
-//		String temp = new String();
-//		temp = "FAILGOTO" + ' ' + con_exit_no;
-//		A1.set(index_if, temp);
 		
 	}
 	
 	@Override public void enterIf_st(SATParser.If_stContext ctx) 
 	{
 		
-		//con_enter_no = counter;
+		
 	}
 	
 	@Override public void exitIf_st(SATParser.If_stContext ctx) 
 	{
-		//con_exit_no = counter;
-		//skip_else = counter;
-		
-		//temp = "FAILGOTO" + ' ' + con_exit_no;
-		
+			
 		String temp = new String();
 		A1.add("PUSH FALSE");
 		counter++;
@@ -324,9 +273,9 @@ public class SATWalker extends SATBaseListener
 	
 	@Override public void exitElse_st(SATParser.Else_stContext ctx) 
 	{
-		//skip_if = counter;
+		
 		String temp = new String();
-		//temp = "FAILGOTO" + ' ' + con_exit_no;
+		
 		skip_else = counter;
 		temp = "FAILGOTO" + ' ' + skip_else;
 		A1.set(index_else, temp);
@@ -334,33 +283,22 @@ public class SATWalker extends SATBaseListener
 
 	@Override
 	public void enterIte_st(SATParser.Ite_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering iteSt");
-		System.out.println(ctx.getText());
-		//ite_enter_no = counter + 3;
-	}
+			}
 
 	@Override
 	public void exitIte_st(SATParser.Ite_stContext ctx) {
 		// TODO Auto-generated method stub
 		ArrayList temp = new ArrayList ();
 		
-		Stack <ArrayList> s = new Stack <ArrayList> (); 
 		
-		s.addAll(modif_stack);
-		System.out.println(s.size());
-		while(!s.isEmpty())
-		{
-			System.out.println("HHHHHHH" + ' ' + s.pop().get(0));
-		}
 		temp = modif_stack.pop();
-		System.out.println("POP" + ' ' + temp.get(0) + " HAHAHA" + modif_stack.size());
+		
 		for(int i =0;i <temp.size(); i++)
 		{
 			A1.add(temp.get(i).toString());
 			counter++;
 		}
-		System.out.println("exiting ITESt");
+		
 		A1.add("PUSH FALSE");
 		counter++;
 		int idx = for_stack.pop();
@@ -369,7 +307,7 @@ public class SATWalker extends SATBaseListener
 		ite_exit_no = counter;
 		String temp1 = new String();
 		temp1 = "FAILGOTO" + ' ' + ite_exit_no;
-		//System.out.print(index_for);
+		
 		int temp_index_for = idx + 3;
 		A1.set(temp_index_for, temp1);
 	}
@@ -379,23 +317,17 @@ public class SATWalker extends SATBaseListener
 
 	@Override
 	public void enterCom_st(SATParser.Com_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering comSt");
-		System.out.println(ctx.getText());
+		
 	}
 
 	@Override
 	public void exitCom_st(SATParser.Com_stContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting comSt");
+		
 	}
 
 	@Override
 	public void enterExp(SATParser.ExpContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering exp");
-		System.out.println(ctx.getText());
-		
+			
 		for(int i =0; i<ctx.simpleExp().size(); i++)
 		{
 			A1.add("PUSH" + ' ' + ctx.simpleExp(i).getText());
@@ -429,14 +361,12 @@ public class SATWalker extends SATBaseListener
 			A1.add("EQUAL");
 			counter++;
 		}
-		//System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
-		//System.out.println(ctx.RELOP().getText());
+		
 	}
 
 	@Override
 	public void exitExp(SATParser.ExpContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting exp");
+		
 	}
 	
 	@Override public void enterPrint(SATParser.PrintContext ctx) 
@@ -453,56 +383,12 @@ public class SATWalker extends SATBaseListener
 	
 	@Override
 	public void enterTerm(SATParser.TermContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering term");
-		System.out.println(ctx.getText());
-		
-//		for(int i =0; i< ctx.factor().size(); i++)
-//		{
-//			if(ctx.factor(i).getText().contains("("))
-//				{
-//				A1.add("CALL" + ' ' + temp_name_params);
-//				counter++;
-//				}
-//			else
-//				{
-//				A1.add("PUSH" + ' ' + ctx.factor(i).getText());
-//				counter++;
-//				}
-//				
-//		}
-//		
-//		
-//		
-//		
-//		if(ctx.OP().toString().contains("+"))
-//			{
-//			A1.add("ADD");
-//			counter++;
-//			}
-//		else if(ctx.OP().toString().contains("-"))
-//			{
-//			A1.add("SUB");
-//			counter++;
-//			}
-//		else if(ctx.OP().toString().contains("*"))
-//			{
-//			A1.add("MUL");
-//			counter++;
-//			}
-//		else if(ctx.OP().toString().contains("/"))
-//			{
-//			A1.add("DIV");		
-//			counter++;
-//			}
-		
+				
 
 	}
 
 	@Override
 	public void exitTerm(SATParser.TermContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting term");
 		for(int i =0; i< ctx.factor().size(); i++)
 		{
 			if(ctx.factor(i).getText().contains("("))
@@ -545,9 +431,6 @@ public class SATWalker extends SATBaseListener
 
 	@Override
 	public void enterFactor(SATParser.FactorContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering factor");
-		System.out.println(ctx.getText());
 		
 		
 		
@@ -555,15 +438,10 @@ public class SATWalker extends SATBaseListener
 
 	@Override
 	public void exitFactor(SATParser.FactorContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting factor");
-	}
+			}
 
 	@Override
 	public void enterCon(SATParser.ConContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering con");
-		System.out.println(ctx.getText());
 		for_stack.push(counter);
 		
 		A1.add("PUSH" + ' ' + ctx.var(0).getText());
@@ -599,102 +477,78 @@ public class SATWalker extends SATBaseListener
 			counter++;
 			}
 		
-		System.out.println("FINDING out who is john snows mother" + " " + ctx.parent.getText());
 		
-//		if(ctx.parent.getText().contains("for("))
-//			A1.add("FOR");
-//			
-//		if(ctx.parent.getText().contains("if("))
-//			A1.add("IF");
-//		
 		index_if = counter;
 		index_for = counter;
 		if_stack.push(index_if);
-		//for_stack.push(index_for);
+		
 		A1.add("FAILGOTO" + ' ');
 		counter++;
-		//index_for = A1.indexOf("FOR");
-		System.out.println(index_for + ' ' + "asadsadasdasdasd" + A1.indexOf(index_for));
+		
+		
 		 
 	
 	}
 
 	@Override
 	public void exitCon(SATParser.ConContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting con");
-		
+			
 	}
 
 	@Override
 	public void enterSimpleExp(SATParser.SimpleExpContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering simExp");
-		System.out.println(ctx.getText());
-			}
+					}
 
 	@Override
 	public void exitSimpleExp(SATParser.SimpleExpContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting simExp");
-		
+			
 	}
 
 	@Override
 	public void enterDt(SATParser.DtContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering dt");
-		System.out.println(ctx.getText());
-	}
+			}
 
 	@Override
 	public void exitDt(SATParser.DtContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting dt");
-	}
+			}
 
 	@Override
 	public void enterParams(SATParser.ParamsContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering params");
-		System.out.println(ctx.getText());
 		
 			build1.append(name + " ");
 			for(int i=0; i<ctx.ID().size(); i++)
 			{
 				if(i==0)
+				{
 					build1.append(ctx.ID(i));
+					build.append(" " + ctx.ID(i));
+				}
 				else
+				{
 					build1.append("," + ctx.ID(i));
-				build.append(' ' + ctx.ID(i).getText());
+					build.append(',' + ctx.ID(i).getText());
+				}	
 			}
 			name_params = build1.toString();
-			System.out.println("before adding to list" + build.toString());
+			
 		A1.add(build.toString());
 		counter++;
-		System.out.println("after adding to list" + A1.toString());
+		
 	}
 
 	@Override
 	public void exitParams(SATParser.ParamsContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting params");
 		
 	}
 
 	@Override
 	public void enterIni(SATParser.IniContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering ini");
-		System.out.println(ctx.getText());
 		
 		
 	}
 
 	@Override
 	public void exitIni(SATParser.IniContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting ini");
 		A1.add("PUSH" + ' ' + ctx.ID());
 		counter++;
 		A1.add("PUSH" + ' ' + ctx.var().getText());
@@ -706,17 +560,15 @@ public class SATWalker extends SATBaseListener
 	
 	@Override
 	public void enterModif(SATParser.ModifContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering modif");
 		ArrayList tmodif = new ArrayList();
-//		modif.clear();
+
 		tmodif.add("PUSH" + ' ' + ctx.ID());
 		
 		tmodif.add("PUSH" + ' ' +ctx.var(0).getText());
 		
 		tmodif.add("PUSH" + ' ' + ctx.var(1).getText());
 		
-		System.out.println("PUSHED");
+		
 		if(ctx.OP().getText().equals("+"))
 			tmodif.add("ADD");
 		if(ctx.OP().getText().equals("-"))
@@ -726,53 +578,43 @@ public class SATWalker extends SATBaseListener
 		tmodif.add("ASSIGN");
 		
 		modif_stack.push(tmodif);
-		System.out.println("BLAJAHAHAHA" + tmodif.get(0));
-		//System.out.println(InfixToPostfix.convertToPostfix(ctx.getText()));
+		
+		
 	}
 
 	@Override
 	public void exitModif(SATParser.ModifContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting modif");
+		
 	}
 
 	@Override
 	public void enterVar(SATParser.VarContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("entering var");
-		System.out.println(ctx.getText());
 		
 		
 	}
 
 	@Override
 	public void exitVar(SATParser.VarContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("exiting var");
+		
 	}
 
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("");
-		System.out.println();
-	}
+			}
 
 	@Override
 	public void exitEveryRule(ParserRuleContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println("");
-	}
+			}
 
 	@Override
 	public void visitTerminal(TerminalNode node) {
-		// TODO Auto-generated method stub
+		
 		super.visitTerminal(node);
 	}
 
 	@Override
 	public void visitErrorNode(ErrorNode node) {
-		// TODO Auto-generated method stub
+		
 		super.visitErrorNode(node);
 	}
 }
