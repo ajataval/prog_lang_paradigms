@@ -5,7 +5,7 @@ class ALOperator(object):
         self.arithoperators = ['ADD', 'SUB', 'MUL', 'DIV', 'MOD']
         self.logicaloperators = ['EQUAL', 'NEQUAL', 'GREATER','GEQ', 'LESSER','LEQ']
         self.dispatch = {"ADD": self.add, "SUB": self.sub, "MUL": self.mul, "DIV": self.mul, "MOD":self.mod, "GREATER":self.greater,
-                         "GEQ": self.geq, "LESSER": self.lesser, "LEQ": self.leq, "EQUAL": self.equal}
+                         "GEQ": self.geq, "LESSER": self.lesser, "LEQ": self.leq, "EQUAL": self.equal, "NEQUAL": self.nequal}
 
     def add(self, num1, num2):
         return num1 + num2
@@ -26,7 +26,7 @@ class ALOperator(object):
         return num1 >= num2
 
     def lesser(self, num1, num2):
-        return num2 < num2
+        return num1 < num2
 
     def leq(self, num1, num2):
         return num1 <= num2
@@ -36,3 +36,6 @@ class ALOperator(object):
 
     def equal(self, num1, num2):
         return num1 == num2
+
+    def nequal(self, num1, num2):
+        return num1 != num2

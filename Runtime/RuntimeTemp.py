@@ -8,7 +8,7 @@ class Runtime(object):
     def __init__(self, int_file_path):
         self.int_file = int_file_path
         self.value_stack = []
-        self.main_env_table = defaultdict(float)
+        self.main_symbol_table = defaultdict(float)
         self.function_map = defaultdict()
 
     def run(self):
@@ -21,11 +21,11 @@ class Runtime(object):
         count = 1
         MAX_RECURSION_DEPTH = 1000
         operators = ALOperator()
-        return_stack = []
+        activation_record = []
         skip = False
         line_num = 0
         call_line_num = 0
-        env_table = self.main_env_table
+        env_pointer = self.main_symbol_table
         runAlready = False
         total_lines = len(lines)
         while line_num < total_lines:
@@ -54,17 +54,17 @@ class Runtime(object):
                 value1 = num1
                 value2 = num2
                 if not isinstance(value1, numbers.Number):
-                    value1 = env_table[value1]
+                    value1 = env_pointer[value1]
                 if not isinstance(value2, numbers.Number):
-                    value2 = env_table[value2]
+                    value2 = env_pointer[value2]
                 self.value_stack.append(operators.dispatch[cmd](value1,value2))
             elif cmd == "ASSIGN":
                 num1 = self.value_stack.pop()
                 num2 = self.value_stack.pop()
                 if isinstance(num1, numbers.Number):
-                    env_table[num2] = num1
+                    env_pointer[num2] = num1
                 else:
-                    env_table[num2] = env_table[num1]
+                    env_pointer[num2] = env_pointer[num1]
             elif cmd == "FSTART":
                 func_name = param[0]
                 func_env_table = defaultdict()
@@ -78,7 +78,7 @@ class Runtime(object):
                         func_code.append(lines[line_num].strip())
                     line_num += 1
                 for arg in args:
-                    func_env_table[arg] = env_table[arg]
+                    func_env_table[arg] = env_pointer[arg]
                 self.function_map[func_name] = Function(func_name, args, func_env_table, func_code, func_start_line)
             elif cmd == "FAILGOTO":
                 popped = self.value_stack.pop()
@@ -93,9 +93,9 @@ class Runtime(object):
             elif cmd  == "FEND":
                 runAlready = True
                 skip = True
-                if return_stack:
-                    skip_num = return_stack.pop() + 1
-                env_table = self.main_env_table
+                if activation_record:
+                    skip_num = activation_record.pop() + 1
+                env_pointer = self.main_symbol_table
                 pass
             elif cmd == "CALL":
                 func_name = param[0]
@@ -103,23 +103,23 @@ class Runtime(object):
                 for key, value in zip(self.function_map[func_name].params,args):
                     value = self.to_int(value)
                     if isinstance(value, numbers.Number):
-                        self.main_env_table[key] = value
+                        self.main_symbol_table[key] = value
                         self.function_map[func_name].env_table[key] = value
                     else:
-                        self.function_map[func_name].env_table[key] = env_table[value]
-                for key, value in self.main_env_table.items():
+                        self.function_map[func_name].env_table[key] = env_pointer[value]
+                for key, value in self.main_symbol_table.items():
                     if key not in self.function_map[func_name].env_table.keys() and not isinstance(key, numbers.Number):
                         self.function_map[func_name].env_table[key] = value
 
-                # for key in self.main_env_table.keys():
-                #     self.function_map[func_name].env_table[key] = self.main_env_table[key]
+                # for key in self.main_symbol_table.keys():
+                #     self.function_map[func_name].env_table[key] = self.main_symbol_table[key]
                 #     print "{}, {}".format(key, env_table[value])
                 # print "FUNCTIOn ENV"
-                # print self.function_map[func_name].env_table.items()
-                env_table = self.function_map[func_name].env_table
-                return_stack.append(self.function_map[func_name])
+                # print self.function_map[func_name].env_pointer.items()
+                env_pointer = self.function_map[func_name].env_table
+                activation_record.append(self.function_map[func_name])
                 call_line_num = line_num
-                return_stack.append(call_line_num)
+                activation_record.append(call_line_num)
                 skip = True
                 skip_num = self.function_map[func_name].start_line_num
             elif cmd == "PRINT":
@@ -128,56 +128,56 @@ class Runtime(object):
                     if isinstance(value, numbers.Number):
                         print value
                     else:
-                        print env_table[value]
+                        print env_pointer[value]
                 elif "\"" in param:
                     print param.replace("\"",''),
                 elif isinstance(param, numbers.Number):
                     print param
                 else:
-                    print env_table[param]
+                    print env_pointer[param]
             elif cmd == "RETURN":
                 param = self.to_int(param)
-                if return_stack:
+                if activation_record:
                     skip = True
-                    skip_num = return_stack.pop() + 1
-                    tmp_table = return_stack.pop()
+                    skip_num = activation_record.pop() + 1
+                    tmp_table = activation_record.pop()
                     # print "Function ENV: {}".format(tmp_table.env_table.items())
                     for key in tmp_table.env_table.keys():
-                        self.main_env_table[key] = tmp_table.env_table[key]
+                        self.main_symbol_table[key] = tmp_table.env_table[key]
                     if isinstance(param, numbers.Number):
                         self.value_stack.append(param)
                     else:
-                        self.value_stack.append(self.main_env_table[param])
+                        self.value_stack.append(self.main_symbol_table[param])
             elif cmd == "READ":
                 readX = int(raw_input("Enter value:"))
                 self.value_stack.append(readX)
             elif cmd == "STACK":
-                self.main_env_table[param] = []
-                env_table[param] = []
+                self.main_symbol_table[param] = []
+                env_pointer[param] = []
             elif cmd == "SPUSH":
                 stackid, data = param.split(',')
                 value = self.to_int(data)
                 if isinstance(value, numbers.Number):
-                    self.main_env_table[stackid].append(value)
+                    self.main_symbol_table[stackid].append(value)
                 else:
-                    self.main_env_table[stackid].append(env_table[value])
+                    self.main_symbol_table[stackid].append(env_pointer[value])
                 print "Pushed value: " + data
             elif cmd == "SPOP":
                 stackid = param
                 try:
-                    popped = self.main_env_table[stackid].pop()
+                    popped = self.main_symbol_table[stackid].pop()
                     print "Popped value: {}".format(popped)
                     self.value_stack.append(popped)
                 except:
                     print "Failed: Stack is empty"
             elif cmd == "SPEEK":
                 stackid = param
-                top = self.main_env_table[stackid][-1]
+                top = self.main_symbol_table[stackid][-1]
                 print "Top value: {}".format(top)
                 self.value_stack.append(top)
             elif cmd == "SEMPTY":
                 stackid = param
-                stack_size = len(self.main_env_table[stackid])
+                stack_size = len(self.main_symbol_table[stackid])
                 self.value_stack.append(stack_size == 0)
 
             if skip:
