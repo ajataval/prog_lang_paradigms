@@ -1,0 +1,11 @@
+1. Code - Contains SAT source code, intermediate language files and JAR file for execution. Steps to execute the JAR is provided in Readme file.
+2. Runtime - Contains 
+	Runtime.py which takes intermedaite code as input to generate output.
+	Function.py which contains class definition for function.
+	Operators.py which contians class definition for aithmethic and relational operator.
+3. SAT - Contains JAVA project code which generates intermediate code.
+4. SAT video.mp4 - A video which explains our poject.
+Youtube video Link: https://www.youtube.com/watch?v=VFO9jLPibuA
+5. SAT.pptx - A complete documentation of our project.
+6. Readme.txt - Explains how to run our source code by executing SAT.JAR file to generate an intermediate language and using this intermediate code execute Runtime.py to generate output.
+

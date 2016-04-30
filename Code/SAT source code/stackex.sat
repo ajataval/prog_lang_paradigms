@@ -1,0 +1,11 @@
+void func main()
+{
+stack s;
+push(s,5);
+push(s,8);
+peek(s);
+isempty(s);
+pop(s);
+pop(s);
+isempty(s);
+}

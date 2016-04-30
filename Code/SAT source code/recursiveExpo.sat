@@ -1,0 +1,13 @@
+void func expo(int b,int e){
+	if(e == 0){
+		return 1;
+	}
+	e=e - 1;
+	output=b* expo(b,e);
+	return output;
+}
+
+void func main(){
+	result = expo(2,10);
+	print result;
+}

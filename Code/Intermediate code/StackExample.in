@@ -1,0 +1,11 @@
+
+STACK s
+SPUSH s,5
+SPUSH s,8
+SPEEK s
+SEMPTY s
+SPOP s
+SPOP s
+SEMPTY s
+SPOP s
+SPOP s
