@@ -1,0 +1,15 @@
+void func factorial(int x){
+	int fact;
+	int i;
+	fact=1;
+	n=x;
+	for(i=1;i<=n;i=i+1){
+		fact=fact*i;
+	}
+	return fact;
+	}
+	
+void func main(){
+	result = factorial(5);
+	print result;
+}
