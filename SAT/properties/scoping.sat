@@ -1,0 +1,12 @@
+void func test(){
+	int n;
+	n = 20;
+	print n;
+	return;
+}
+void func main(){
+    int n;
+	n = 10;
+	a = test();
+	print n;
+}
